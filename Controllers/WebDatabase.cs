@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace BookTradingPlatform.Controllers
+namespace BookTradingPlatform.Data
 {
 	public class WebDatabase : DbContext
 	{

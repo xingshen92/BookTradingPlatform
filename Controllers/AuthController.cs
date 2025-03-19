@@ -1,41 +1,48 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
+using Microsoft.EntityFrameworkCore;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using System.Security.Cryptography;
+using BookTradingPlatform.Data;
+using BookTradingPlatform.Models;
 
 [Route("api/[controller]")]
 [ApiController]
 public class AuthController : ControllerBase
 {
+    private readonly WebDatabase _context; // Ensure WebDatabase is defined or imported
     private readonly IConfiguration _config;
 
-    public AuthController(IConfiguration config)
+    public AuthController(WebDatabase context, IConfiguration config)
     {
+        _context = context;
         _config = config;
     }
 
     [HttpPost("login")]
-    public IActionResult Login([FromBody] UserLoginDto loginDto)
+    public async Task<IActionResult> Login([FromBody] UserLoginDto loginDto)
     {
-        // 模擬一個使用者帳號密碼，這邊應該是連資料庫檢查
-        if (loginDto.Username == "admin" && loginDto.Password == "123456")
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == loginDto.Username);
+
+        if (user == null || !VerifyPassword(loginDto.Password, user.PasswordHash))
         {
-            var token = GenerateJwtToken(loginDto.Username);
-            return Ok(new { token });
+            return Unauthorized(new { message = "帳號或密碼錯誤" });
         }
 
-        return Unauthorized(new { message = "帳號或密碼錯誤" });
+        var token = GenerateJwtToken(user);
+        return Ok(new { token });
     }
 
-    private string GenerateJwtToken(string username)
+    private string GenerateJwtToken(User user)
     {
-        var key = Encoding.UTF8.GetBytes(_config["Jwt:Key"]);
-        var creds = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256);
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
+        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
         var claims = new[]
         {
-            new Claim(ClaimTypes.Name, username),
-            new Claim(ClaimTypes.Role, "Admin")
+            new Claim(ClaimTypes.Name, user.Username),
+            new Claim(ClaimTypes.Role, user.Role)
         };
 
         var token = new JwtSecurityToken(
@@ -44,6 +51,13 @@ public class AuthController : ControllerBase
             signingCredentials: creds);
 
         return new JwtSecurityTokenHandler().WriteToken(token);
+    }
+
+    private bool VerifyPassword(string password, string storedHash)
+    {
+        using var sha256 = SHA256.Create();
+        var hash = Convert.ToBase64String(sha256.ComputeHash(Encoding.UTF8.GetBytes(password)));
+        return hash == storedHash;
     }
 }
 

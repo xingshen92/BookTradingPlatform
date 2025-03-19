@@ -1,33 +1,19 @@
-﻿using BookTradingPlatform.Controllers;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Configuration;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using BookTradingPlatform.Data;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
+// 註冊服務
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 //=========================phpadmin sql=========================//
 builder.Services.AddDbContext<WebDatabase>(options => 
-        options.UseMySQL(builder.Configuration.GetConnectionString("WebDatabase"))
-    );
-
-var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+        options.UseMySQL(builder.Configuration.GetConnectionString("WebDatabase")));
 //var connectionString = builder.Configuration.GetConnectionString("WebDatabase");
 //builder.Services.AddDbContext<WebDatabase>(options =>
 //	options.UseMySql(
@@ -37,7 +23,7 @@ if (app.Environment.IsDevelopment())
 //);
 //builder.Services.AddDbContext<WebDatabase>(options => options.UseMySQL(builder.Configuration.GetConnectionString("WebDatabase")));
 //=========================JWT Token身份驗證=========================//
-var key = Encoding.UTF8.GetBytes("Your_Secret_Key_Replace_With_Actual_Secret");
+var key = Encoding.ASCII.GetBytes("Your_Secret_Key");
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -51,9 +37,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateAudience = false
         };
     });
-
-app.UseAuthentication();  // 啟用身份驗證
-app.UseAuthorization();   // 啟用授權
 //=========================axios=========================//
 //var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 //
@@ -74,12 +57,23 @@ app.UseAuthorization();   // 啟用授權
 //app.UseCors(MyAllowSpecificOrigins);
 
 //==================================================//
+// 構建應用程式
+var app = builder.Build();
+// 配置中介軟體
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
+app.UseAuthentication();  // 啟用身份驗證
+app.UseAuthorization();   // 啟用授權
+
 app.UseHttpsRedirection(); //強制執行https
 app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
-
 //=========================IP Adders=========================//
 //builder.Services.AddHttpsRedirection(options =>
 //{
