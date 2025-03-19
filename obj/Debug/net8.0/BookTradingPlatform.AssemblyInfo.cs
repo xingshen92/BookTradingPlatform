@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("BookTradingPlatform")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b1c64939ebeab17f934b02e92cb6872dfea8b6ee")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+179c260e70bc6f832d27af95b67b1670d38521e2")]
 [assembly: System.Reflection.AssemblyProductAttribute("BookTradingPlatform")]
 [assembly: System.Reflection.AssemblyTitleAttribute("BookTradingPlatform")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

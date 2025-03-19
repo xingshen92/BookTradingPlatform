@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\User\\Desktop\\Book_Trading_Platform\\BookTradingPlatform\\BookTradingPlatform.csproj": {}
+    "C:\\Users\\User\\Desktop\\BookTradingPlatform\\BookTradingPlatform\\BookTradingPlatform.csproj": {}
   },
   "projects": {
-    "C:\\Users\\User\\Desktop\\Book_Trading_Platform\\BookTradingPlatform\\BookTradingPlatform.csproj": {
+    "C:\\Users\\User\\Desktop\\BookTradingPlatform\\BookTradingPlatform\\BookTradingPlatform.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\User\\Desktop\\Book_Trading_Platform\\BookTradingPlatform\\BookTradingPlatform.csproj",
+        "projectUniqueName": "C:\\Users\\User\\Desktop\\BookTradingPlatform\\BookTradingPlatform\\BookTradingPlatform.csproj",
         "projectName": "BookTradingPlatform",
-        "projectPath": "C:\\Users\\User\\Desktop\\Book_Trading_Platform\\BookTradingPlatform\\BookTradingPlatform.csproj",
+        "projectPath": "C:\\Users\\User\\Desktop\\BookTradingPlatform\\BookTradingPlatform\\BookTradingPlatform.csproj",
         "packagesPath": "C:\\Users\\User\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\User\\Desktop\\Book_Trading_Platform\\BookTradingPlatform\\obj\\",
+        "outputPath": "C:\\Users\\User\\Desktop\\BookTradingPlatform\\BookTradingPlatform\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -57,6 +57,10 @@
               "target": "Package",
               "version": "[9.0.2, )"
             },
+            "Microsoft.IdentityModel.Tokens": {
+              "target": "Package",
+              "version": "[8.6.1, )"
+            },
             "MySql.Data": {
               "target": "Package",
               "version": "[9.2.0, )"
@@ -68,6 +72,10 @@
             "Swashbuckle.AspNetCore": {
               "target": "Package",
               "version": "[6.6.2, )"
+            },
+            "System.IdentityModel.Tokens.Jwt": {
+              "target": "Package",
+              "version": "[8.6.1, )"
             }
           },
           "imports": [
