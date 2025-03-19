@@ -306,3 +306,4 @@ C:\Users\User\Desktop\Book_Trading_Platform\BookTradingPlatform\obj\Debug\net8.0
 C:\Users\User\Desktop\Book_Trading_Platform\BookTradingPlatform\obj\Debug\net8.0\BookTradingPlatform.pdb
 C:\Users\User\Desktop\Book_Trading_Platform\BookTradingPlatform\obj\Debug\net8.0\BookTradingPlatform.genruntimeconfig.cache
 C:\Users\User\Desktop\Book_Trading_Platform\BookTradingPlatform\obj\Debug\net8.0\ref\BookTradingPlatform.dll
+C:\Users\User\Desktop\BookTradingPlatform\BookTradingPlatform\obj\Debug\net8.0\BookTradingPlatform.sourcelink.json
