@@ -55,7 +55,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 //app.Urls.Add("http://localhost:5000"); // 你的 API 端口
 //
 //app.UseCors(MyAllowSpecificOrigins);
-
+//=========================IP 監聽訪問=========================//
+builder.WebHost.UseUrls("http://0.0.0.0:5000");
 //==================================================//
 // 構建應用程式
 var app = builder.Build();
