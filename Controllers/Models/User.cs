@@ -6,7 +6,7 @@ namespace BookTradingPlatform.Models
 	{
 		[Key]
 		public int Id { get; set; }
-		public string Userame { get; set; } //用戶名稱(帳號)
+		public string Username { get; set; } //用戶名稱(帳號)
 		public string Password { get; set; } //密碼
 		public string Email { get; set; }	//信箱
 		public int Student_id { get; set; }	//學號
