@@ -8,6 +8,7 @@ namespace BookTradingPlatform.Data
 	{
 		public WebDatabase(DbContextOptions<WebDatabase> options) : base(options) { }
 		public DbSet<User> Users { get; set; }
+		
 	}
 }
 

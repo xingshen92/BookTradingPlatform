@@ -1,0 +1,12 @@
+{
+  "Version": 1,
+  "Hash": "qCdRzqeMu60D9EOSz9IbY+hWf8e6ZQxgB52rHFY+tFM=",
+  "Source": "BookTradingPlatform",
+  "BasePath": "_content/BookTradingPlatform",
+  "Mode": "Default",
+  "ManifestType": "Publish",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": [],
+  "Endpoints": []
+}

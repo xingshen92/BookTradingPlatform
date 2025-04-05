@@ -2,6 +2,7 @@
 
 namespace BookTradingPlatform.Models
 {
+	
 	public class User
 	{
 		[Key]
@@ -12,9 +13,8 @@ namespace BookTradingPlatform.Models
 		public int Student_id { get; set; }	//學號
 		public string Department { get; set; }	//科系名稱
 		public string TelePhone { get; set; }	//用戶電話
-		public int Modified_at { get; set; }	//更新時間
-		public int Modified_name { get; set; }	//名稱更新時間
-		
+		public DateTime  Modified_at { get; set; }	//更新時間
+		public DateTime  Modified_name { get; set; }	//名稱更新時間
 		public string Role { get; set; }	//用戶角色(管理員/一般用戶)
 	}
 }

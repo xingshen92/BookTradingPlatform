@@ -26,12 +26,13 @@ public class AuthController : ControllerBase
     {
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == loginDto.Username);
 
-        if (user == null || !VerifyPassword(loginDto.Password, user.PasswordHash))
+        if (user == null || !VerifyPassword(loginDto.Password, user.Password))
         {
             return Unauthorized(new { message = "帳號或密碼錯誤" });
         }
 
-        var token = GenerateJwtToken(user);
+        //var token = GenerateJwtToken(user);
+        var token = "testxxxxxx";
         return Ok(new { token });
     }
 
