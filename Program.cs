@@ -4,6 +4,7 @@ using Microsoft.IdentityModel.Tokens;
 using BookTradingPlatform.Data;
 using System.Text;
 using Microsoft.OpenApi.Models;
+using BookTradingPlatform.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,7 +16,7 @@ builder.Services.AddSwaggerGen();
 
 //=========================phpadmin sql=========================//
 builder.Services.AddDbContext<WebDatabase>(options => 
-        options.UseMySQL(builder.Configuration.GetConnectionString("WebDatabase")));
+        options.UseMySql(builder.Configuration.GetConnectionString("WebDatabase"),new MySqlServerVersion(new Version(8, 0, 29))));
 //var connectionString = builder.Configuration.GetConnectionString("WebDatabase");
 //builder.Services.AddDbContext<WebDatabase>(options =>
 //	options.UseMySql(
@@ -25,20 +26,22 @@ builder.Services.AddDbContext<WebDatabase>(options =>
 //);
 //builder.Services.AddDbContext<WebDatabase>(options => options.UseMySQL(builder.Configuration.GetConnectionString("WebDatabase")));
 //=========================JWT Token身份驗證=========================//
-var key = Encoding.ASCII.GetBytes("Your_Secret_Key");
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
-        options.RequireHttpsMetadata = false;
-        options.SaveToken = true;
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(key),
-            ValidateIssuer = false,
-            ValidateAudience = false
-        };
+		var key = Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]);
+		options.TokenValidationParameters = new TokenValidationParameters
+		{
+			ValidateIssuer = true,
+			ValidateAudience = true,
+			ValidateLifetime = true,
+			ValidateIssuerSigningKey = true,
+			ValidIssuer = builder.Configuration["Jwt:Issuer"],
+			ValidAudience = builder.Configuration["Jwt:Audience"],
+			IssuerSigningKey = new SymmetricSecurityKey(key)
+		};
     });
+builder.Services.AddScoped<JwtToken>();
 //=========================axios=========================//
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
@@ -47,7 +50,7 @@ builder.Services.AddCors(options =>
 	options.AddPolicy(name: MyAllowSpecificOrigins,
 					  policy =>
 					  {
-						  policy.WithOrigins("http://15.235.167.223") // Vue3 开发服务器地址
+						  policy.AllowAnyOrigin() // Vue3 IP位置 WithOrigins("http://15.235.167.223")
 								.AllowAnyHeader()
 								.AllowAnyMethod();
 					  });
@@ -67,6 +70,7 @@ var app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI();
 
+app.UseRouting();
 app.UseAuthentication();  // 啟用身份驗證
 app.UseAuthorization();   // 啟用授權
 
