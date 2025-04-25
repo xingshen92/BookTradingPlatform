@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("BookTradingPlatform")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f5c27e36bcfc1b0687936d0f4e3e9cf4d8dd65e8")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c6178da56eef65be2a720443984b47e7d55f31e9")]
 [assembly: System.Reflection.AssemblyProductAttribute("BookTradingPlatform")]
 [assembly: System.Reflection.AssemblyTitleAttribute("BookTradingPlatform")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

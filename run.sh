@@ -1,22 +1,19 @@
 #!/bin/bash
 
-#變數
-APP_PATH="/home/user/myapp"
-APP_DLL="YourApi.dll"
-LOG_FILE="/var/log/mywebapi.log"
+# 設定 API 的路徑
+API_PATH="/home/book/API"
 
-# 查看目前已有的API進程
-PID=$(pgrep -f $APP_DLL)
+# 設定 tmux 分頁名稱（您可以自定義名稱）
+SESSION_NAME="my_api_session"
+WINDOW_NAME="api_window"
 
-if [ -n "$PID" ]; then
-    echo "[$(date)] Web API is already running (PID: $PID). Restarting..." | tee -a $LOG_FILE
-    kill -9 $PID  
-    sleep 2  
+# 如果 tmux session 不存在，創建一個新的 session
+if ! tmux has-session -t $SESSION_NAME 2>/dev/null; then
+    tmux new-session -d -s $SESSION_NAME -n $WINDOW_NAME
 fi
 
-# 進入API目錄並且啟動
-echo "[$(date)] Starting Web API..." | tee -a $LOG_FILE
-cd $APP_PATH
-nohup dotnet $APP_DLL > $LOG_FILE 2>&1 &
+# 在指定的 tmux 窗口中執行指令
+tmux send-keys -t $SESSION_NAME:$WINDOW_NAME "cd $API_PATH && dotnet BookTradingPlatform.dll" C-m
 
-echo "[$(date)] Web API started successfully." | tee -a $LOG_FILE
+# 顯示狀態訊息
+echo "ASP.NET API 已啟動並在 tmux 分頁中執行！（Session 名稱：$SESSION_NAME，Window 名稱：$WINDOW_NAME）"
