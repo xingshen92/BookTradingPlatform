@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using BookTradingPlatform.Controllers.Models;
+using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
 
 namespace BookTradingPlatform.Models
@@ -38,6 +39,11 @@ namespace BookTradingPlatform.Models
 		public DateTime  Modified_name { get; set; }    //名稱更新時間
 		[Required]
 		public string Role { get; set; } = "user";   //用戶角色(管理員/一般用戶)
+													 // 導覽屬性
+		public ICollection<Product> Products { get; set; }
+		public ICollection<Favorite> Favorites { get; set; }
+		public ICollection<Chat> SentChats { get; set; }
+		public ICollection<Chat> ReceivedChats { get; set; }
 
 		public User() { }
 		public User(string username, string password, string email, int studentId, int department, string telephone, DateTime modifiedAt, string modifiedName, string role)
