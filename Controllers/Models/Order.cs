@@ -9,7 +9,7 @@ namespace BookTradingPlatform.Controllers.Models
 		public int SellerId { get; set; } // 賣家 ID
 		public int ProductId { get; set; } // 商品 ID
 		public decimal TotalPrice { get; set; } // 總金額
-		public DateTime CreatedAt { get; set; } // 訂單建立時間
+		public DateTime Created_at { get; set; } // 訂單建立時間
 
 		// 導覽屬性
 		public User Buyer { get; set; }

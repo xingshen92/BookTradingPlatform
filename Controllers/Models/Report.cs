@@ -8,7 +8,7 @@ namespace BookTradingPlatform.Controllers.Models
 		public int ReporterId { get; set; } // 檢舉者 ID
 		public int ProductId { get; set; } // 被檢舉商品 ID
 		public string Reason { get; set; } // 檢舉原因
-		public DateTime CreatedAt { get; set; } // 檢舉時間
+		public DateTime Created_at { get; set; } // 檢舉時間
 
 		public User Reporter { get; set; }
 		public Product Product { get; set; }

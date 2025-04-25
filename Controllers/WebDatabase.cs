@@ -15,6 +15,11 @@ namespace BookTradingPlatform.Data
 		{
 			ModelBuilder.Entity<Admin>(entity =>
 			{
+				entity.Property(e => e.Id).HasColumnName("id");
+				entity.Property(e => e.IP).HasColumnName("ip").HasMaxLength(50);
+				entity.Property(e => e.Login_at).HasColumnType("datetime").HasColumnName("login_at");
+				entity.Property(e => e.Modified_at).HasColumnType("datetime").HasColumnName("modified_at");
+				entity.Property(e => e.Work).HasColumnName("work").HasMaxLength(50);
 			}
 			);
 			ModelBuilder.Entity<User>(entity =>
@@ -31,19 +36,55 @@ namespace BookTradingPlatform.Data
 				entity.Property(e => e.Role).HasColumnName("role").HasMaxLength(10);
 			}
 			);
-
 			ModelBuilder.Entity<Product>(entity =>
 			{
 				entity.Property(e => e.Id).HasColumnName("id");
 				entity.Property(e => e.SKU).HasColumnName("SKU").HasMaxLength(50);
 				entity.Property(e => e.SKUName).HasColumnName("SKUName").HasMaxLength(50);
-				entity.Property(e => e.publishing_house).HasColumnName("publishing_house");
-				entity.Property(e => e.publishing_at).HasColumnType("datetime").HasColumnName("publishing_at");
-				entity.Property(e => e.price).HasColumnName("price");
-				entity.Property(e => e.desc).HasColumnName("desc");
-				entity.Property(e => e.image).HasColumnType("image").HasMaxLength(20);
+				entity.Property(e => e.Publishing_house).HasColumnName("publishing_house");
+				entity.Property(e => e.Publishing_at).HasColumnType("datetime").HasColumnName("publishing_at");
+				entity.Property(e => e.Price).HasColumnName("price");
+				entity.Property(e => e.Desc).HasColumnName("desc");
+				entity.Property(e => e.Image).HasColumnType("image").HasMaxLength(20);
 				entity.Property(e => e.Modified_at).HasColumnType("datetime").HasColumnName("modified_at");
-				entity.Property(e => e.transaction).HasColumnName("transaction").HasMaxLength(10);
+				entity.Property(e => e.Transaction).HasColumnName("transaction").HasMaxLength(10);
+			}
+			);
+			ModelBuilder.Entity<Favorite>(entity =>
+			{
+				entity.Property(e => e.Id).HasColumnName("id");
+				entity.Property(e => e.UserId).HasColumnName("user_id");
+				entity.Property(e => e.ProductId).HasColumnName("product_id");
+				entity.Property(e => e.Created_at).HasColumnType("datetime").HasColumnName("created_at");
+			}
+			);
+			ModelBuilder.Entity<Report>(entity =>
+			{
+				entity.Property(e => e.Id).HasColumnName("id");
+				entity.Property(e => e.ReporterId).HasColumnName("reporter_id");
+				entity.Property(e => e.ProductId).HasColumnName("product_id");
+				entity.Property(e => e.Reason).HasColumnName("reason").HasMaxLength(200);
+				entity.Property(e => e.Created_at).HasColumnType("datetime").HasColumnName("created_at");
+			}
+			);
+			ModelBuilder.Entity<Order>(entity =>
+			{
+				entity.Property(e => e.Id).HasColumnName("id");
+				entity.Property(e => e.BuyerId).HasColumnName("BuyerId");
+				entity.Property(e => e.SellerId).HasColumnName("SellerId");
+				entity.Property(e => e.ProductId).HasColumnName("ProductId");
+				entity.Property(e => e.TotalPrice).HasColumnName("TotalPrice");
+				entity.Property(e => e.Created_at).HasColumnType("datetime").HasColumnName("created_at");
+			}
+			);
+			ModelBuilder.Entity<Chat>(entity =>
+			{
+				entity.Property(e => e.Id).HasColumnName("id");
+				entity.Property(e => e.SenderId).HasColumnName("sender_id");
+				entity.Property(e => e.ReceiverId).HasColumnName("receiver_id");
+				entity.Property(e => e.Message).HasColumnName("message").HasMaxLength(500);
+				entity.Property(e => e.Image).HasColumnName("image").HasMaxLength(500);
+				entity.Property(e => e.Modified_at).HasColumnType("datetime").HasColumnName("modified_at");
 			}
 			);
 		}
