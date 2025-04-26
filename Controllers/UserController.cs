@@ -11,7 +11,7 @@ public class UserController : ControllerBase
     // 假設在某個 Controller 裡
 private readonly WebDatabase _context;
 
-public UserController(WebDatabase context, JwtToken jwt)
+public UserController(WebDatabase context)
 {
     _context = context;
 }

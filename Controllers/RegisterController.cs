@@ -1,52 +1,44 @@
-﻿using BookTradingPlatform.Data;
-using BookTradingPlatform.Models;
+﻿using BookTradingPlatform.Dtos;
+using BookTradingPlatform.Services;
 using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
 [Route("api/[controller]")]
-public class RegisterController : Controller
+public class RegisterController : ControllerBase
 {
-	private readonly WebDatabase _context;
+	private readonly RegisterService _registerService;
 
-	public RegisterController(WebDatabase context)
+	public RegisterController(RegisterService registerService)
 	{
-		_context = context;
+		_registerService = registerService;
 	}
+
 	[HttpGet]
 	public IActionResult GetUsers()
 	{
-		var users = _context.Users.ToList();
+		var users = _registerService.GetAllUsers();
 		return Ok(users);
 	}
+
 	[HttpPost]
-	public async Task<IActionResult> PostRegister(User user)
+	public async Task<IActionResult> PostRegister([FromBody] RegisterRequestDto registerRequest)
 	{
-		if (_context.Users.Any(u => u.Username == user.Username))
-			return BadRequest("用戶名稱已存在");
+		var result = await _registerService.RegisterAsync(registerRequest);
 
-		user.Modified_at = DateTime.UtcNow;
-		user.Role = "User";
+		if (result == "用戶名稱已存在")
+			return BadRequest(result);
 
-		_context.Users.Add(user);
-		await _context.SaveChangesAsync();
-
-		return Ok("註冊成功");
+		return Ok(result);
 	}
-	//更新資料
+
 	[HttpPut("update/{id}")]
-	public async Task<IActionResult> UpdateUser(int id, [FromBody] User updatedUser)
+	public async Task<IActionResult> UpdateUser(int id, [FromBody] UpdateUserRequestDto updateRequest)
 	{
-		var user = await _context.Users.FindAsync(id);
-		if (user == null)
-			return NotFound();
+		var result = await _registerService.UpdateUserAsync(id, updateRequest);
 
-		user.Email = updatedUser.Email;
-		user.TelePhone = updatedUser.TelePhone;
-		user.Modified_at = DateTime.UtcNow;
-		user.Modified_name = updatedUser.Modified_name; // 應由登入的使用者填入
+		if (result == "使用者不存在")
+			return NotFound(result);
 
-		await _context.SaveChangesAsync();
-
-		return Ok("使用者資料已更新");
+		return Ok(result);
 	}
 }

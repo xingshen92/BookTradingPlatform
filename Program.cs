@@ -10,6 +10,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 
 // 註冊服務
+
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -41,7 +43,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 			IssuerSigningKey = new SymmetricSecurityKey(key)
 		};
     });
-builder.Services.AddScoped<JwtToken>();
 //=========================axios=========================//
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
@@ -57,6 +58,13 @@ builder.Services.AddCors(options =>
 });
 //=========================IP 監聽訪問=========================//
 builder.WebHost.UseUrls("http://0.0.0.0:2025");
+//==================================================//
+//=========================註冊服務=========================//
+builder.Services.AddScoped<RegisterService>();
+builder.Services.AddScoped<LoginService>();
+builder.Services.AddScoped<JwtTokenServices>();
+builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IAdminLogService>();
 //==================================================//
 // 構建應用程式
 var app = builder.Build();
