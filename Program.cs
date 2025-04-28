@@ -9,13 +9,16 @@ using BookTradingPlatform.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 
-// 註冊服務
-
+//=========================註冊服務=========================//
+builder.Services.AddScoped<RegisterService>(); //註冊
+builder.Services.AddScoped<LoginService>(); //登入
+builder.Services.AddScoped<JwtTokenServices>();
+builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IAdminLogService>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
 //=========================phpadmin sql=========================//
 builder.Services.AddDbContext<WebDatabase>(options => 
         options.UseMySql(builder.Configuration.GetConnectionString("WebDatabase"),new MySqlServerVersion(new Version(8, 0, 29))));
@@ -59,13 +62,7 @@ builder.Services.AddCors(options =>
 //=========================IP 監聽訪問=========================//
 builder.WebHost.UseUrls("http://0.0.0.0:2025");
 //==================================================//
-//=========================註冊服務=========================//
-builder.Services.AddScoped<RegisterService>();
-builder.Services.AddScoped<LoginService>();
-builder.Services.AddScoped<JwtTokenServices>();
-builder.Services.AddScoped<IProductService, ProductService>();
-builder.Services.AddScoped<IAdminLogService>();
-//==================================================//
+
 // 構建應用程式
 var app = builder.Build();
 // 配置中介軟體
