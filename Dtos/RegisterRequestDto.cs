@@ -1,21 +1,14 @@
 ﻿namespace BookTradingPlatform.Dtos
 {
-	// 註冊請求
-	public class RegisterRequestDto
-	{
-		public string Username { get; set; }
-		public string Password { get; set; }
-		public string Email { get; set; }
-		public string Student_id { get; set; }
-		public string Department { get; set; }
-		public string TelePhone { get; set; }
-	}
-
-	// 更新用戶資料請求
-	public class UpdateUserRequestDto
-	{
-		public string Email { get; set; }
-		public string TelePhone { get; set; }
-		public DateTime Modified_name { get; set; } //由前端帶上更新人資訊
+    // 註冊請求的資料傳輸物件
+    public class RegisterRequestDto
+    {
+        
+        public string Username { get; set; }  // 帳號名稱
+        public string Email { get; set; }  // 電子郵件
+        public string Password { get; set; } // 密碼
+		public string StudentId { get; set; }  // 學生編號
+		public string Department { get; set; } // 所屬部門
+		public string Telephone { get; set; }  // 電話
 	}
 }

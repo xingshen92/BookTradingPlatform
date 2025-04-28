@@ -66,7 +66,7 @@ namespace BookTradingPlatform.Services
             var token = _jwt.GenerateToken(user);
 
             return new LoginResponseDto
-            {
+			{
                 Message = "Token 重新產生成功",
                 Token = token,
                 User = new UserDto
@@ -81,7 +81,7 @@ namespace BookTradingPlatform.Services
 		private bool VerifyPassword(string inputPassword, string storedHashedPassword)
 		{
 			// 這裡是直接比對，如果有加Hash，可以用BCrypt/其他解碼方式
-			return inputPassword == storedHashedPassword;
+			return BCrypt.Net.BCrypt.Verify(inputPassword, storedHashedPassword);
 		}
 	}
 }
