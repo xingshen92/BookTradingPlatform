@@ -1,44 +1,36 @@
 ﻿using BookTradingPlatform.Dtos;
 using BookTradingPlatform.Services;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
-[ApiController]
-[Route("api/[controller]")]
-public class RegisterController : ControllerBase
+namespace BookTradingPlatform.Controllers
 {
-	private readonly RegisterService _registerService;
+    [ApiController]
+    [Route("api/[controller]")]
+    public class RegisterController : ControllerBase
+    {
+        private readonly RegisterService _registerService;
 
-	public RegisterController(RegisterService registerService)
-	{
-		_registerService = registerService;
-	}
+        public RegisterController(RegisterService registerService)
+        {
+            _registerService = registerService;
+        }
 
-	[HttpGet]
-	public IActionResult GetUsers()
-	{
-		var users = _registerService.GetAllUsers();
-		return Ok(users);
-	}
+        // 註冊API
+        [HttpPost]
+        public async Task<IActionResult> Register([FromBody] RegisterRequestDto registerDto)
+        {
+            // 呼叫 RegisterService 來處理註冊邏輯
+            var response = await _registerService.RegisterAsync(registerDto);
 
-	[HttpPost]
-	public async Task<IActionResult> PostRegister([FromBody] RegisterRequestDto registerRequest)
-	{
-		var result = await _registerService.RegisterAsync(registerRequest);
+            if (!response.IsSuccess)
+            {
+                // 註冊失敗，返回錯誤訊息
+                return BadRequest(response.Message);
+            }
 
-		if (result == "用戶名稱已存在")
-			return BadRequest(result);
-
-		return Ok(result);
-	}
-
-	[HttpPut("update/{id}")]
-	public async Task<IActionResult> UpdateUser(int id, [FromBody] UpdateUserRequestDto updateRequest)
-	{
-		var result = await _registerService.UpdateUserAsync(id, updateRequest);
-
-		if (result == "使用者不存在")
-			return NotFound(result);
-
-		return Ok(result);
-	}
+            // 註冊成功，返回成功訊息
+            return Ok(response);
+        }
+    }
 }
