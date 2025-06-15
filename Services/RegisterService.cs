@@ -71,7 +71,8 @@ namespace BookTradingPlatform.Services
                 .FirstOrDefaultAsync(u => u.Username.ToLower() == registerDto.Username.ToLower() || u.Email.ToLower() == registerDto.Email.ToLower());
 
 			if (existingUser != null) { return new RegisterResponseDto { IsSuccess = false, Message = "帳號或信箱已經存在" }; }
- 
+
+			// 驗證輸入資料 帳號 密碼 信箱 電話
 			if (!IsValidUsername(registerDto.Username))
 				return new RegisterResponseDto { IsSuccess = false, Message = "帳號必須至少6個字元，且包含英文字母" };
 			if (!IsValidPassword(registerDto.Password))
@@ -81,21 +82,21 @@ namespace BookTradingPlatform.Services
 
 			if (!IsValidTaiwanPhoneNumber(registerDto.Telephone))
 				return new RegisterResponseDto { IsSuccess = false, Message = "電話格式錯誤，必須是台灣手機格式 09XX XXX XXX" };
-
-			// 生成密碼的哈希值
+			
+			// 密碼加密處理 雜錯加密
 			var hashedPassword = BCrypt.Net.BCrypt.HashPassword(registerDto.Password);
 
             // 創建新的使用者
             var userBo = new UserBO
 			{
-                Username = registerDto.Username,
-                Email = registerDto.Email,
-				PasswordHash = hashedPassword,
+                Username = registerDto.Username, 		// 帳號
+                Email = registerDto.Email,              // 信箱
+				PasswordHash = hashedPassword,          // 密碼雜湊
 				StudentId = registerDto.StudentId,      // 學生編號
 				Department = registerDto.Department,    // 所屬部門
 				Telephone = registerDto.Telephone,      // 電話
-				Role = "User", // 預設為普通使用者
-				ModifiedAt = DateTime.UtcNow
+				Role = "User", 							// 預設為普通使用者
+				ModifiedAt = DateTime.UtcNow 			// 修改時間
             };
 
 			var userPo = userBo.ToPersistenceObject();
@@ -120,13 +121,13 @@ namespace BookTradingPlatform.Services
                 Message = "註冊成功",
                 User = new UserDto
                 {
-                    Id = userPo.Id,
-                    Username = userPo.Username,
-                    Email = userPo.Email,
-                    Role = userPo.Role,
-                    Student_id = userPo.Student_id,  // 返回學生編號
-					Department = userPo.Department, // 返回部門
-					Telephone = userPo.TelePhone  // 返回電話
+                    Id = userPo.Id,						// 返回使用者ID
+                    Username = userPo.Username, 		// 返回帳號
+                    Email = userPo.Email,				// 返回信箱
+                    Role = userPo.Role, 				// 返回角色
+                    Student_id = userPo.Student_id, 	// 返回學生編號
+					Department = userPo.Department, 	// 返回部門
+					Telephone = userPo.TelePhone  		// 返回電話
                 }
             };
         }

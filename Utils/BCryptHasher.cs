@@ -2,6 +2,7 @@
 
 namespace BookTradingPlatform.Utilities
 {
+	// 使用 BCrypt 進行密碼加密和驗證 雜錯加密
 	public class BCryptHasher
 	{
 		// 密碼加密
