@@ -14,15 +14,16 @@ namespace BookTradingPlatform.Data
 		public DbSet<Product> Products { get; set; }
 		protected override void OnModelCreating(ModelBuilder ModelBuilder)
 		{
-			ModelBuilder.Entity<Adminlog>(entity =>
-			{
-				entity.Property(e => e.Id).HasColumnName("id");
-				entity.Property(e => e.IP).HasColumnName("ip").HasMaxLength(50);
-				entity.Property(e => e.Login_at).HasColumnType("datetime").HasColumnName("login_at");
-				entity.Property(e => e.Modified_at).HasColumnType("datetime").HasColumnName("modified_at");
-				entity.Property(e => e.Work).HasColumnName("work").HasMaxLength(50);
-			}
-			);
+			//ModelBuilder.Entity<Adminlog>(entity =>
+			//{
+			//	entity.Property(e => e.Id).HasColumnName("id");
+			//	entity.Property(e => e.IP).HasColumnName("ip").HasMaxLength(50);
+			//	entity.Property(e => e.Login_at).HasColumnType("datetime").HasColumnName("login_at");
+			//	entity.Property(e => e.Modified_at).HasColumnType("datetime").HasColumnName("modified_at");
+			//	entity.Property(e => e.Work).HasColumnName("work").HasMaxLength(50);
+			//}
+			//);
+			// 使用者資料
 			ModelBuilder.Entity<User>(entity =>
 			{
 				entity.Property(e => e.Id).HasColumnName("id");
@@ -37,20 +38,22 @@ namespace BookTradingPlatform.Data
 				entity.Property(e => e.Role).HasColumnName("role").HasMaxLength(10);
 			}
 			);
+			// 商品資料
 			ModelBuilder.Entity<Product>(entity =>
 			{
-				entity.Property(e => e.Id).HasColumnName("id");
+				entity.Property(e => e.Id).HasColumnName("id"); 
+				entity.Property(e => e.UserId).HasColumnName("user_id");
 				entity.Property(e => e.SKU).HasColumnName("SKU").HasMaxLength(50);
-				entity.Property(e => e.Name).HasColumnName("Name").HasMaxLength(200);
+				entity.Property(e => e.Name).HasColumnName("name").HasMaxLength(200);
 				entity.Property(e => e.PublishingHouse).HasColumnName("publishing_house");
 				entity.Property(e => e.PublishingAt).HasColumnName("publishing_at").HasMaxLength(50);;
 				entity.Property(e => e.Price).HasColumnName("price");
-				entity.Property(e => e.Desc).HasColumnName("desc");
+				entity.Property(e => e.Desc).HasColumnName("desc").HasMaxLength(1000);
 				entity.Property(e => e.Image).HasColumnType("image").HasMaxLength(20);
 				entity.Property(e => e.ModifiedAt).HasColumnType("datetime").HasColumnName("modified_at");
 				entity.Property(e => e.Transaction).HasColumnName("transaction").HasMaxLength(20);
 			}
-			);
+			);//NO.XXXXXX
 			//ModelBuilder.Entity<Favorite>(entity =>
 			//{
 			//	entity.Property(e => e.Id).HasColumnName("id");
