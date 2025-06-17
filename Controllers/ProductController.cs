@@ -20,14 +20,21 @@ public class ProductController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Product>>> GetAll()
+    public async Task<ActionResult<IEnumerable<ProductVO>>> GetAll()
     {
-        var products = await _productService.GetAllAsync();
-        return Ok(products);
+        try
+        {
+            var products = await _productService.GetAllAsync();
+            return Ok(products);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"發生錯誤: {ex.Message}");
+        }
     }
-
+    
     [HttpGet("{id}")]
-    public async Task<ActionResult<Product>> GetById(int id)
+    public async Task<ActionResult<ProductVO>> GetById(int id)
     {
         var product = await _productService.GetByIdAsync(id);
         if (product == null) return NotFound();
@@ -35,7 +42,7 @@ public class ProductController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<Product>> Create(ProductCreateDto dto)
+    public async Task<ActionResult<ProductVO>> Create(ProductCreateDto dto)
     {
         var product = await _productService.CreateAsync(dto);
         return CreatedAtAction(nameof(GetById), new { id = product.Id }, product);
