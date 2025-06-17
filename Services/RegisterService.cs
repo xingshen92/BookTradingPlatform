@@ -64,6 +64,19 @@ namespace BookTradingPlatform.Services
 		{
 			return Regex.IsMatch(phoneNumber, @"^09\d{2}\s?\d{3}\s?\d{3}$");
 		}
+		// 生成唯一的用戶ID
+		private async Task<string> GenerateUniqueUserIdAsync()
+		{
+			var random = new Random();
+			string newId;
+			do
+			{
+				int number = random.Next(10000000, 99999999);
+				newId = $"NO.{number}"; // 前綴 "NO."
+			} while (await _context.Users.AnyAsync(u => u.MemberNumber == newId));
+
+			return newId;
+		}
 		public async Task<RegisterResponseDto> RegisterAsync(RegisterRequestDto registerDto)
         {
             // 檢查帳號或信箱是否已經存在
@@ -89,14 +102,15 @@ namespace BookTradingPlatform.Services
             // 創建新的使用者
             var userBo = new UserBO
 			{
-                Username = registerDto.Username, 		// 帳號
-                Email = registerDto.Email,              // 信箱
-				PasswordHash = hashedPassword,          // 密碼雜湊
-				StudentId = registerDto.StudentId,      // 學生編號
-				Department = registerDto.Department,    // 所屬部門
-				Telephone = registerDto.Telephone,      // 電話
-				Role = "User", 							// 預設為普通使用者
-				ModifiedAt = DateTime.UtcNow 			// 修改時間
+				MemberNumber = await GenerateUniqueUserIdAsync(),  // 簡單的ID生成邏輯
+                Username = registerDto.Username, 		   	 	   // 帳號
+                Email = registerDto.Email,                	 // 信箱
+				PasswordHash = hashedPassword,               // 密碼雜湊
+				StudentId = registerDto.StudentId,           // 學生編號
+				Department = registerDto.Department,         // 所屬部門
+				Telephone = registerDto.Telephone,           // 電話
+				Role = "User", 							     // 預設為普通使用者
+				ModifiedAt = DateTime.UtcNow 			     // 修改時間
             };
 
 			var userPo = userBo.ToPersistenceObject();
@@ -122,6 +136,7 @@ namespace BookTradingPlatform.Services
                 User = new UserDto
                 {
                     Id = userPo.Id,						// 返回使用者ID
+					MemberNumber = userPo.MemberNumber,				// 返回用戶ID
                     Username = userPo.Username, 		// 返回帳號
                     Email = userPo.Email,				// 返回信箱
                     Role = userPo.Role, 				// 返回角色
