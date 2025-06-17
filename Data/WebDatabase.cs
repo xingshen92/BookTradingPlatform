@@ -27,6 +27,7 @@ namespace BookTradingPlatform.Data
 			ModelBuilder.Entity<User>(entity =>
 			{
 				entity.Property(e => e.Id).HasColumnName("id");
+				entity.Property(e => e.MemberNumber).HasColumnName("MemberNumber").HasMaxLength(50);
 				entity.Property(e => e.Username).HasColumnName("username").HasMaxLength(50);
 				entity.Property(e => e.Password).HasColumnName("password");
 				entity.Property(e => e.Email).HasColumnName("email").HasMaxLength(100);
@@ -42,7 +43,7 @@ namespace BookTradingPlatform.Data
 			ModelBuilder.Entity<Product>(entity =>
 			{
 				entity.Property(e => e.Id).HasColumnName("id"); 
-				entity.Property(e => e.UserId).HasColumnName("user_id");
+				entity.Property(e => e.Userid).HasColumnName("user_id");
 				entity.Property(e => e.SKU).HasColumnName("SKU").HasMaxLength(50);
 				entity.Property(e => e.Name).HasColumnName("name").HasMaxLength(200);
 				entity.Property(e => e.PublishingHouse).HasColumnName("publishing_house");
@@ -53,7 +54,7 @@ namespace BookTradingPlatform.Data
 				entity.Property(e => e.ModifiedAt).HasColumnType("datetime").HasColumnName("modified_at");
 				entity.Property(e => e.Transaction).HasColumnName("transaction").HasMaxLength(20);
 			}
-			);//NO.XXXXXX
+			);
 			//ModelBuilder.Entity<Favorite>(entity =>
 			//{
 			//	entity.Property(e => e.Id).HasColumnName("id");
