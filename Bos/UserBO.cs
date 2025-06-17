@@ -2,6 +2,7 @@
 {
 	public class UserBO
 	{
+		public string MemberNumber { get; set; } 
 		public string Username { get; set; }
 		public string Email { get; set; }
 		public string PasswordHash { get; set; }
@@ -16,6 +17,7 @@
 		{
 			return new Models.User
 			{
+				MemberNumber = this.MemberNumber, 
 				Username = this.Username,
 				Email = this.Email,
 				Password = this.PasswordHash,
