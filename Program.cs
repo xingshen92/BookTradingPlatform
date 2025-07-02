@@ -5,6 +5,7 @@ using BookTradingPlatform.Data;
 using System.Text;
 using Microsoft.OpenApi.Models;
 using BookTradingPlatform.Services;
+using BookTradingPlatform.Utils;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,10 +16,12 @@ builder.Services.AddScoped<LoginService>(); //登入
 builder.Services.AddScoped<JwtTokenServices>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IAdminLogService>();
+builder.Services.AddScoped<UserDataService>(); // 使用者資料服務
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddAutoMapper(typeof(AutoMapperProfile)); // AutoMapper 設定
 //=========================phpadmin sql=========================//
 builder.Services.AddDbContext<WebDatabase>(options => 
         options.UseMySql(builder.Configuration.GetConnectionString("WebDatabase"),new MySqlServerVersion(new Version(8, 0, 29))));
