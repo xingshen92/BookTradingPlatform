@@ -1,7 +1,5 @@
 using BookTradingPlatform.Data;
 using BookTradingPlatform.Dtos;
-using BookTradingPlatform.Models;
-using BookTradingPlatform.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace BookTradingPlatform.Services

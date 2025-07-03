@@ -1,6 +1,5 @@
 using BookTradingPlatform.Data;
 using BookTradingPlatform.Models;
-using BookTradingPlatform.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 

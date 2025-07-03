@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using BookTradingPlatform.Data;
 using System.Text;
-using Microsoft.OpenApi.Models;
 using BookTradingPlatform.Services;
 using BookTradingPlatform.Utils;
 

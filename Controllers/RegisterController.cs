@@ -1,7 +1,6 @@
 ﻿using BookTradingPlatform.Dtos;
 using BookTradingPlatform.Services;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 
 namespace BookTradingPlatform.Controllers
 {
