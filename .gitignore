@@ -1,0 +1,10 @@
+# Build
+bin/
+obj/
+
+# User-specific
+*.user
+*.suo
+
+# VS Code settings
+.vscode/
