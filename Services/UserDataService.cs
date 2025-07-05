@@ -215,9 +215,9 @@ namespace BookTradingPlatform.Services
 				user.Email == userDataDto.Email &&
 				user.Student_id == userDataDto.Student_id &&
 				user.TelePhone == userDataDto.PhoneNumber &&
-				userDataDto.OldPassword == null &&
-				userDataDto.NewPassword == null &&
-				userDataDto.ConfirmPassword == null
+				string.IsNullOrEmpty(userDataDto.OldPassword) &&
+				string.IsNullOrEmpty(userDataDto.NewPassword) &&
+				string.IsNullOrEmpty(userDataDto.ConfirmPassword)
 				)
 			{
 				return new UserDataResponseDto
@@ -242,8 +242,8 @@ namespace BookTradingPlatform.Services
 					return new UserDataResponseDto
 					{
 						IsSuccess = false,
-						Message = "更新資料失敗: " + modifiedNameResult,
-						User =
+						Message = "更新資料失敗：" + modifiedNameResult,
+						User = new UserDataVO
 						{
 							Username = user.Username,
 							Email = user.Email,
@@ -258,8 +258,8 @@ namespace BookTradingPlatform.Services
 				{
 					return new UserDataResponseDto {
 						IsSuccess = false,
-						Message = "更新資料失敗: " + usernameResult,
-						User =
+						Message = "更新資料失敗：" + usernameResult,
+						User = new UserDataVO
 						{
 							Username = user.Username,
 							Email = user.Email,
@@ -281,8 +281,8 @@ namespace BookTradingPlatform.Services
 					return new UserDataResponseDto
 					{
 						IsSuccess = false,
-						Message = "更新資料失敗: " + emailResult,
-						User =
+						Message = "更新資料失敗：" + emailResult,
+						User = new UserDataVO
 						{
 							Username = user.Username,
 							Email = user.Email,
@@ -303,8 +303,8 @@ namespace BookTradingPlatform.Services
 					return new UserDataResponseDto
 					{
 						IsSuccess = false,
-						Message = "更新資料失敗: " + studentIdResult,
-						User =
+						Message = "更新資料失敗：" + studentIdResult,
+						User = new UserDataVO
 						{
 							Username = user.Username,
 							Email = user.Email,
@@ -325,8 +325,8 @@ namespace BookTradingPlatform.Services
 					return new UserDataResponseDto
 					{
 						IsSuccess = false,
-						Message = "更新資料失敗: " + phoneResult,
-						User =
+						Message = "更新資料失敗：" + phoneResult,
+						User = new UserDataVO
 						{
 							Username = user.Username,
 							Email = user.Email,
@@ -345,13 +345,13 @@ namespace BookTradingPlatform.Services
 
 			if (!string.IsNullOrEmpty(userDataDto.ConfirmPassword)) passwordfilled++; //檢查再次確認密碼是否有填寫
 
-			if (passwordfilled != 0 || passwordfilled != 3) //檢查舊密碼、新密碼或再次確認密碼是否同時填寫或同時為空
+			if (passwordfilled != 0 && passwordfilled != 3) //檢查舊密碼、新密碼或再次確認密碼是否同時填寫或同時為空
 			{
 				return new UserDataResponseDto
 				{
 					IsSuccess = false,
-					Message = "必須同時填寫舊密碼、新密碼及再次確認密碼",
-					User =
+					Message = "更新資料失敗：必須同時填寫舊密碼、新密碼及再次確認密碼",
+					User = new UserDataVO
 					{
 						Username = user.Username,
 						Email = user.Email,
@@ -368,8 +368,8 @@ namespace BookTradingPlatform.Services
 					return new UserDataResponseDto
 					{
 						IsSuccess = false,
-						Message = "更新資料失敗: " + oldPasswordResult,
-						User =
+						Message = "更新資料失敗：" + oldPasswordResult,
+						User = new UserDataVO
 						{
 							Username = user.Username,
 							Email = user.Email,
@@ -385,8 +385,8 @@ namespace BookTradingPlatform.Services
 					return new UserDataResponseDto
 					{
 						IsSuccess = false,
-						Message = "更新資料失敗: " + newPasswordResult,
-						User =
+						Message = "更新資料失敗：" + newPasswordResult,
+						User = new UserDataVO
 						{
 							Username = user.Username,
 							Email = user.Email,

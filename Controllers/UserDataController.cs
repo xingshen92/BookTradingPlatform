@@ -35,7 +35,7 @@ public class UserDataController : ControllerBase
 			return NotFound("更新資料失敗：未回傳資料");
 		
 		if (!response.IsSuccess)
-			return BadRequest("更新資料失敗" + response.Message);
+			return BadRequest(response);
 
 		return Ok(response);
 	}
