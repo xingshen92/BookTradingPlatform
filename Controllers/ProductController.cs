@@ -1,8 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using BookTradingPlatform.Data;
-using BookTradingPlatform.Models;
-using BookTradingPlatform.Controllers.Models;
-using Microsoft.EntityFrameworkCore;
+using BookTradingPlatform.Services;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -10,9 +7,9 @@ public class ProductController : ControllerBase
 {
 	//private readonly WebDatabase _context;
     private readonly IProductService _productService;
-	private readonly IAdminLogService _adminLogService;
+	private readonly AdminLogService _adminLogService;
 
-    public ProductController(IProductService productService, IAdminLogService adminLogService)
+    public ProductController(IProductService productService, AdminLogService adminLogService)
     {
 		//_context = context;
         _productService = productService;
