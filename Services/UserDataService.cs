@@ -363,21 +363,21 @@ namespace BookTradingPlatform.Services
 			else if (passwordfilled == 3)
 			{
 				//檢查舊密碼是否正確
-				if (!CheckOldPassword(userDataDto.OldPassword, user.Password, out string oldPasswordResult))
-				{
-					return new UserDataResponseDto
-					{
-						IsSuccess = false,
-						Message = "更新資料失敗：" + oldPasswordResult,
-						User = new UserDataVO
-						{
-							Username = user.Username,
-							Email = user.Email,
-							Student_id = user.Student_id,
-							PhoneNumber = user.TelePhone
-						}
-					};
-				}
+				//if (!CheckOldPassword(userDataDto.OldPassword, user.Password, out string oldPasswordResult))
+				//{
+				//	return new UserDataResponseDto
+				//	{
+				//		IsSuccess = false,
+				//		Message = "更新資料失敗：" + oldPasswordResult,
+				//		User = new UserDataVO
+				//		{
+				//			Username = user.Username,
+				//			Email = user.Email,
+				//			Student_id = user.Student_id,
+				//			PhoneNumber = user.TelePhone
+				//		}
+				//	};
+				//}
 				
 				//檢查新密碼是否符合規定
 				if (!CheckNewPassword(userDataDto.NewPassword, userDataDto.ConfirmPassword, out string newPasswordResult))

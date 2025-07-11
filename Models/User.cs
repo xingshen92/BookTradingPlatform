@@ -1,5 +1,4 @@
 ﻿using BookTradingPlatform.Controllers.Models;
-using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
 
 namespace BookTradingPlatform.Models

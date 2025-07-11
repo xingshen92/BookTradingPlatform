@@ -7,10 +7,12 @@ using Microsoft.AspNetCore.Mvc;
 public class UserDataController : ControllerBase
 {
 	private readonly UserDataService _userdataService;
+	private readonly AdminLogService _adminLogService;
 
-	public UserDataController(UserDataService userdataService)
+	public UserDataController(UserDataService userdataService, AdminLogService adminLogService)
 	{
 		_userdataService = userdataService;
+		_adminLogService = adminLogService;
 	}
 
 	//進入網頁，取得使用者資料
@@ -37,8 +39,8 @@ public class UserDataController : ControllerBase
 		if (!response.IsSuccess)
 			return BadRequest(response);
 
+		await _adminLogService.AddLogAdminAsync(id, "修改個人資料");
+
 		return Ok(response);
 	}
 }
-
-

@@ -14,15 +14,16 @@ namespace BookTradingPlatform.Data
 		public DbSet<Product> Products { get; set; }
 		protected override void OnModelCreating(ModelBuilder ModelBuilder)
 		{
-			//ModelBuilder.Entity<Adminlog>(entity =>
-			//{
-			//	entity.Property(e => e.Id).HasColumnName("id");
-			//	entity.Property(e => e.IP).HasColumnName("ip").HasMaxLength(50);
-			//	entity.Property(e => e.Login_at).HasColumnType("datetime").HasColumnName("login_at");
-			//	entity.Property(e => e.Modified_at).HasColumnType("datetime").HasColumnName("modified_at");
-			//	entity.Property(e => e.Work).HasColumnName("work").HasMaxLength(50);
-			//}
-			//);
+			// 管理員紀錄
+			ModelBuilder.Entity<Adminlog>(entity =>
+			{
+				entity.Property(e => e.Id).HasColumnName("id");
+				entity.Property(e => e.IP).HasColumnName("ip").HasMaxLength(50);
+				entity.Property(e => e.Login_at).HasColumnType("datetime").HasColumnName("login_at");
+				entity.Property(e => e.Modified_at).HasColumnType("datetime").HasColumnName("modified_at");
+				entity.Property(e => e.Work).HasColumnName("work").HasMaxLength(50);
+			}
+			);
 			// 使用者資料
 			ModelBuilder.Entity<User>(entity =>
 			{
