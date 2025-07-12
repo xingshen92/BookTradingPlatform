@@ -17,6 +17,8 @@ namespace BookTradingPlatform.Data
 			// 管理員紀錄
 			ModelBuilder.Entity<Adminlog>(entity =>
 			{
+				entity.ToTable("Adminlog");
+
 				entity.Property(e => e.Id).HasColumnName("id");
 				entity.Property(e => e.IP).HasColumnName("ip").HasMaxLength(50);
 				entity.Property(e => e.Login_at).HasColumnType("datetime").HasColumnName("login_at");
@@ -27,6 +29,8 @@ namespace BookTradingPlatform.Data
 			// 使用者資料
 			ModelBuilder.Entity<User>(entity =>
 			{
+				entity.ToTable("Users");
+
 				entity.Property(e => e.Id).HasColumnName("id");
 				entity.Property(e => e.MemberNumber).HasColumnName("MemberNumber").HasMaxLength(50);
 				entity.Property(e => e.Username).HasColumnName("username").HasMaxLength(50);
@@ -43,6 +47,8 @@ namespace BookTradingPlatform.Data
 			// 商品資料
 			ModelBuilder.Entity<Product>(entity =>
 			{
+				entity.ToTable("Products");
+
 				entity.Property(e => e.Id).HasColumnName("id"); 
 				entity.Property(e => e.Userid).HasColumnName("user_id");
 				entity.Property(e => e.SKU).HasColumnName("SKU").HasMaxLength(50);
@@ -58,6 +64,8 @@ namespace BookTradingPlatform.Data
 			);
 			//ModelBuilder.Entity<Favorite>(entity =>
 			//{
+			//	entity.ToTable("Favorites");
+			//
 			//	entity.Property(e => e.Id).HasColumnName("id");
 			//	entity.Property(e => e.UserId).HasColumnName("user_id");
 			//	entity.Property(e => e.ProductId).HasColumnName("product_id");
@@ -66,6 +74,8 @@ namespace BookTradingPlatform.Data
 			//);
 			//ModelBuilder.Entity<Report>(entity =>
 			//{
+			//	entity.ToTable("Report");
+			//
 			//	entity.Property(e => e.Id).HasColumnName("id");
 			//	entity.Property(e => e.ReporterId).HasColumnName("reporter_id");
 			//	entity.Property(e => e.ProductId).HasColumnName("product_id");
@@ -75,6 +85,8 @@ namespace BookTradingPlatform.Data
 			//);
 			//ModelBuilder.Entity<Order>(entity =>
 			//{
+			//	entity.ToTable("Orders");
+			//
 			//	entity.Property(e => e.Id).HasColumnName("id");
 			//	entity.Property(e => e.BuyerId).HasColumnName("BuyerId");
 			//	entity.Property(e => e.SellerId).HasColumnName("SellerId");
@@ -85,6 +97,8 @@ namespace BookTradingPlatform.Data
 			//);
 			//ModelBuilder.Entity<Chat>(entity =>
 			//{
+			//	entity.ToTable("Chats");
+			//
 			//	entity.Property(e => e.Id).HasColumnName("id");
 			//	entity.Property(e => e.SenderId).HasColumnName("sender_id");
 			//	entity.Property(e => e.ReceiverId).HasColumnName("receiver_id");
