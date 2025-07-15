@@ -1,17 +1,29 @@
-﻿using BookTradingPlatform.Data;
+﻿using AutoMapper;
+using BookTradingPlatform.Common;
+using BookTradingPlatform.Data;
 using BookTradingPlatform.Dtos;
+using BookTradingPlatform.Models;
 using BookTradingPlatform.Vos;
 using Microsoft.EntityFrameworkCore;
+using MySqlX.XDevAPI.Common;
 using System.Text.RegularExpressions;
 
 namespace BookTradingPlatform.Services
 {
-	public class UserDataService
+	public interface IUserDataService
+	{
+		Task<Result<UserDataResponseDto>> GetUserDataAsync(int id);
+		Task<Result<UserDataResponseDto>> UpdateDataAsync(int id, UserDataRequestDto userDataDto);
+	}
+
+	class UserDataService : IUserDataService
 	{
 		private readonly WebDatabase _context;
-		public UserDataService(WebDatabase context)
+		private readonly IMapper _mapper;
+		public UserDataService(WebDatabase context, IMapper mapper)
 		{
 			_context = context;
+			_mapper = mapper;
 		}
 
 		//gmail及學校帳號後綴
@@ -27,7 +39,7 @@ namespace BookTradingPlatform.Services
 
 			if (Thirtydayago <= Modifiedname) //如果修改時間在30天內
 			{
-				result = "帳號名稱得30天後才能修改";
+				result = ErrorCodes.NameTimeRefuse;
 				return false;
 			}
 
@@ -39,25 +51,25 @@ namespace BookTradingPlatform.Services
 		{
 			if (string.IsNullOrEmpty(Username)) //檢查帳號名稱是否為空
 			{
-				result = "帳號名不得為空";
+				result = ErrorCodes.UserNameIsNull;
 				return false;
 			}
 
 			if (Username.Length < 6) //檢查帳號名稱長度是否至少6個字元
 			{
-				result = "帳號名必須至少6個字元";
+				result = ErrorCodes.UserNameTooShort;
 				return false;
 			}
 
 			if (" ".Contains(Username)) //檢查帳號名稱是否包含空格
 			{
-				result = "帳號名不得包含空格";
+				result = ErrorCodes.UserNameSpace;
 				return false;
 			}
 
 			if (!Regex.IsMatch(Username, "[a-zA-Z]")) //檢查帳號名稱是否包含至少一個英文字母
 			{
-				result = "帳號名必須包含英文名";
+				result = ErrorCodes.UserNameFormatError;
 				return false;
 			}
 
@@ -72,25 +84,31 @@ namespace BookTradingPlatform.Services
 
 			if (string.IsNullOrEmpty(Email)) //檢查信箱是否為空
 			{
-				result = "信箱不得為空";
+				result = ErrorCodes.EmailIsNull;
+				return false;
+			}
+
+			if (_context.Users.Any(u => u.Email == Email)) //檢查信箱是否已被使用
+			{
+				result = ErrorCodes.EmailRepeat;
 				return false;
 			}
 
 			if (" ".Contains(Email)) //檢查信箱是否包含空格
 			{
-				result = "信箱不得包含空格";
+				result = ErrorCodes.EmailSpace;
 				return false;
 			}
 
 			if (parts.Length != 2) //檢查信箱格式是否正確
 			{
-				result = "信箱格式不正確";
+				result = ErrorCodes.EmailFormatError;
 				return false;
 			}
 
 			if (!allowedDomains.Contains(domain)) //檢查信箱後綴是否為允許的域名
 			{
-				result = "信箱必須為學校或gmail帳號";
+				result = ErrorCodes.EmailFormError;
 				return false;
 			}
 
@@ -102,19 +120,25 @@ namespace BookTradingPlatform.Services
 		{
 			if (string.IsNullOrEmpty(Student_id)) //檢查學號是否為空
 			{
-				result = "學號不得為空";
+				result = ErrorCodes.StudentIsNull;
+				return false;
+			}
+
+			if (_context.Users.Any(u => u.Student_id == Student_id)) //檢查學號是否已被使用
+			{
+				result = ErrorCodes.StudentRepeat;
 				return false;
 			}
 
 			if (" ".Contains(Student_id)) //檢查學號是否包含空格
 			{
-				result = "學號不得包含空格";
+				result = ErrorCodes.StudentSpace;
 				return false;
 			}
 
 			if (!Regex.IsMatch(Student_id, @"^\d{8}$")) //檢查學號格式是否符合8位數字
 			{
-				result = "學號格式錯誤，必須是8位數字";
+				result = ErrorCodes.StudentFormatError;
 				return false;
 			}
 
@@ -126,14 +150,21 @@ namespace BookTradingPlatform.Services
 		{
 			if (string.IsNullOrEmpty(Phonenumber)) //檢查電話是否為空
 			{
-				result = "電話號碼不得為空";
+				result = ErrorCodes.PhoneIsNull;
+				return false;
+			}
+
+			if (_context.Users.Any(u => u.TelePhone == Phonenumber)) //檢查電話是否已被使用
+			{
+				result = ErrorCodes.PhoneRepeat;
 				return false;
 			}
 
 			if (!Regex.IsMatch(Phonenumber, @"^09\d{2}\s?\d{3}\s?\d{3}$")) //檢查電話格式是否符合台灣手機號碼格式
 			{
-				result = "電話格式錯誤，必須是台灣手機格式 09XX XXX XXX";
+				result = ErrorCodes.PhoneFormatError;
 				return false;
+				//"電話格式錯誤，必須是台灣手機格式 09XX XXX XXX";
 			}
 
 			result = "";
@@ -144,7 +175,7 @@ namespace BookTradingPlatform.Services
 		{
 			if (!BCrypt.Net.BCrypt.Verify(Oldpassword, Password)) //檢查舊密碼是否正確
 			{
-				result = "密碼錯誤";
+				result = ErrorCodes.PasswordsIncorrect;
 				return false;
 			}
 
@@ -156,25 +187,25 @@ namespace BookTradingPlatform.Services
 		{
 			if (Newpassword.Length < 8) //檢查新密碼長度是否至少8個字元
 			{
-				result = "新密碼必須至少8個字元";
+				result = ErrorCodes.PasswordsTooShort;
 				return false;
 			}
 
 			if (" ".Contains(Newpassword)) //檢查新密碼是否包含空格
 			{
-				result = "新密碼不得包含空格";
+				result = ErrorCodes.PasswordsSpace;
 				return false;
 			}
 
 			if (!Regex.IsMatch(Newpassword, "[a-zA-Z]") || !Regex.IsMatch(Newpassword, "[0-9]")) //檢查新密碼是否符合規定
 			{
-				result = "新密碼必須包含至少一個英文字母和一個數字";
+				result = ErrorCodes.PasswordsFormatError;
 				return false;
 			}
 
 			if (Newpassword != Confirmpassword) //檢查再次確認密碼是否與新密碼相同
 			{
-				result = "新密碼必須與再次確認密碼相同";
+				result = ErrorCodes.PasswordsDoNotMatch;
 				return false;
 			}
 
@@ -182,34 +213,28 @@ namespace BookTradingPlatform.Services
 			return true;
 		}
 
-		public async Task<UserDataResponseDto> GetUserDataAsync(int id)
+		public async Task<Result<UserDataResponseDto>> GetUserDataAsync(int id)
 		{
 			var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
 
 			if (user == null)
-				return null;
+				return Result<UserDataResponseDto>.Failure(ErrorCodes.UserNotFound);
 
-			return new UserDataResponseDto
+			return Result<UserDataResponseDto>.Success(new UserDataResponseDto
 			{
-				IsSuccess = true,
 				Message = "取得資料成功",
-				User = new UserDataVO
-				{
-					Username = user.Username,
-					Email = user.Email,
-					Student_id = user.Student_id,
-					PhoneNumber = user.TelePhone
-				}
-			};
+				User = _mapper.Map<UserDataVO>(user)
+			});
 		}
 
-		public async Task<UserDataResponseDto> UpdateDataAsync(int id, UserDataRequestDto userDataDto)
+		public async Task<Result<UserDataResponseDto>> UpdateDataAsync(int id, UserDataRequestDto userDataDto)
 		{
 			var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
+			var changeuser = user;
 			var passwordfilled = 0; //用來計算密碼欄位是否有填寫
 
 			if (user == null)
-				return null;
+				return Result<UserDataResponseDto>.Failure(ErrorCodes.UserNotFound);
 
 			if (user.Username == userDataDto.Username && //如果沒有任何資料需要更新，直接返回成功訊息
 				user.Email == userDataDto.Email &&
@@ -220,18 +245,11 @@ namespace BookTradingPlatform.Services
 				string.IsNullOrEmpty(userDataDto.ConfirmPassword)
 				)
 			{
-				return new UserDataResponseDto
+				return Result<UserDataResponseDto>.Success(new UserDataResponseDto
 				{
-					IsSuccess = true,
 					Message = "沒有需要更新的資料",
-					User = new UserDataVO
-					{
-						Username = user.Username,
-						Email = user.Email,
-						Student_id = user.Student_id,
-						PhoneNumber = user.TelePhone
-					}
-				};
+					User = _mapper.Map<UserDataVO>(user)
+				});
 			}
 
 			if (user.Username != userDataDto.Username) //是否有修改帳號名稱
@@ -239,38 +257,25 @@ namespace BookTradingPlatform.Services
 				//檢查帳號名稱上次修改時間是否已經過30天
 				if (!CheckModifiedName(user.Modified_name, out string modifiedNameResult))
 				{
-					return new UserDataResponseDto
+					return Result<UserDataResponseDto>.Failure(modifiedNameResult, new UserDataResponseDto
 					{
-						IsSuccess = false,
-						Message = "更新資料失敗：" + modifiedNameResult,
-						User = new UserDataVO
-						{
-							Username = user.Username,
-							Email = user.Email,
-							Student_id = user.Student_id,
-							PhoneNumber = user.TelePhone
-						}
-					};
+						Message = "更新資料失敗："+ErrorMessages.GetMessage(modifiedNameResult),
+						User = _mapper.Map<UserDataVO>(user)
+					});
 				}
 
 				//檢查帳號名稱是否符合規定
 				if (!CheckUsername(userDataDto.Username, out string usernameResult))
 				{
-					return new UserDataResponseDto {
-						IsSuccess = false,
-						Message = "更新資料失敗：" + usernameResult,
-						User = new UserDataVO
-						{
-							Username = user.Username,
-							Email = user.Email,
-							Student_id = user.Student_id,
-							PhoneNumber = user.TelePhone
-						}
-					};
+					return Result<UserDataResponseDto>.Failure(usernameResult, new UserDataResponseDto
+					{
+						Message = "更新資料失敗："+ErrorMessages.GetMessage(usernameResult),
+						User = _mapper.Map<UserDataVO>(user)
+					});
 				}
 
-				user.Username = userDataDto.Username;
-				user.Modified_name = DateTime.UtcNow; //更新帳號修改時間
+				changeuser.Username = userDataDto.Username;
+				changeuser.Modified_name = DateTime.UtcNow; //更新帳號修改時間
 			}
 
 			if (user.Email != userDataDto.Email) //是否有修改信箱
@@ -278,21 +283,14 @@ namespace BookTradingPlatform.Services
 				//檢查信箱格式是否正確
 				if (!CheckEmail(userDataDto.Email, out string emailResult))
 				{
-					return new UserDataResponseDto
+					return Result<UserDataResponseDto>.Failure(emailResult, new UserDataResponseDto
 					{
-						IsSuccess = false,
-						Message = "更新資料失敗：" + emailResult,
-						User = new UserDataVO
-						{
-							Username = user.Username,
-							Email = user.Email,
-							Student_id = user.Student_id,
-							PhoneNumber = user.TelePhone
-						}
-					};
+						Message = "更新資料失敗：" + ErrorMessages.GetMessage(emailResult),
+						User = _mapper.Map<UserDataVO>(user)
+					});
 				}
 
-				user.Email = userDataDto.Email;
+				changeuser.Email = userDataDto.Email;
 			}
 
 			if (user.Student_id != userDataDto.Student_id) //是否有修改學號
@@ -300,21 +298,14 @@ namespace BookTradingPlatform.Services
 				//檢查學號格式是否正確
 				if (!CheckStudentId(userDataDto.Student_id, out string studentIdResult))
 				{
-					return new UserDataResponseDto
+					return Result<UserDataResponseDto>.Failure(studentIdResult, new UserDataResponseDto
 					{
-						IsSuccess = false,
-						Message = "更新資料失敗：" + studentIdResult,
-						User = new UserDataVO
-						{
-							Username = user.Username,
-							Email = user.Email,
-							Student_id = user.Student_id,
-							PhoneNumber = user.TelePhone
-						}
-					};
+						Message = "更新資料失敗：" + ErrorMessages.GetMessage(studentIdResult),
+						User = _mapper.Map<UserDataVO>(user)
+					});
 				}
 
-				user.Student_id = userDataDto.Student_id;
+				changeuser.Student_id = userDataDto.Student_id;
 			}
 
 			if (user.TelePhone != userDataDto.PhoneNumber) //是否有修改電話
@@ -322,21 +313,14 @@ namespace BookTradingPlatform.Services
 				//檢查電話格式是否正確
 				if (!CheckPhoneNumber(userDataDto.PhoneNumber, out string phoneResult))
 				{
-					return new UserDataResponseDto
+					return Result<UserDataResponseDto>.Failure(phoneResult, new UserDataResponseDto
 					{
-						IsSuccess = false,
-						Message = "更新資料失敗：" + phoneResult,
-						User = new UserDataVO
-						{
-							Username = user.Username,
-							Email = user.Email,
-							Student_id = user.Student_id,
-							PhoneNumber = user.TelePhone
-						}
-					};
+						Message = "更新資料失敗：" + ErrorMessages.GetMessage(phoneResult),
+						User = _mapper.Map<UserDataVO>(user)
+					});
 				}
 
-				user.TelePhone = userDataDto.PhoneNumber;
+				changeuser.TelePhone = userDataDto.PhoneNumber;
 			}
 
 			if (!string.IsNullOrEmpty(userDataDto.OldPassword)) passwordfilled++; //檢查舊密碼是否有填寫
@@ -347,78 +331,51 @@ namespace BookTradingPlatform.Services
 
 			if (passwordfilled != 0 && passwordfilled != 3) //檢查舊密碼、新密碼或再次確認密碼是否同時填寫或同時為空
 			{
-				return new UserDataResponseDto
+				return Result<UserDataResponseDto>.Failure(ErrorCodes.PasswordsInputError, new UserDataResponseDto
 				{
-					IsSuccess = false,
-					Message = "更新資料失敗：必須同時填寫舊密碼、新密碼及再次確認密碼",
-					User = new UserDataVO
-					{
-						Username = user.Username,
-						Email = user.Email,
-						Student_id = user.Student_id,
-						PhoneNumber = user.TelePhone
-					}
-				};
+					Message = "更新資料失敗：" + ErrorMessages.GetMessage(ErrorCodes.PasswordsInputError),
+					User = _mapper.Map<UserDataVO>(user)
+				});
 			}
 			else if (passwordfilled == 3)
 			{
 				//檢查舊密碼是否正確
 				//if (!CheckOldPassword(userDataDto.OldPassword, user.Password, out string oldPasswordResult))
 				//{
-				//	return new UserDataResponseDto
+				//	return Result<UserDataResponseDto>.Failure(oldPasswordResult, new UserDataResponseDto
 				//	{
-				//		IsSuccess = false,
-				//		Message = "更新資料失敗：" + oldPasswordResult,
-				//		User = new UserDataVO
-				//		{
-				//			Username = user.Username,
-				//			Email = user.Email,
-				//			Student_id = user.Student_id,
-				//			PhoneNumber = user.TelePhone
-				//		}
-				//	};
+				//		Message = "更新資料失敗：" + ErrorMessages.GetMessage(oldPasswordResult),
+				//		User = _mapper.Map<UserDataVO>(user)
+				//	});
 				//}
-				
+
 				//檢查新密碼是否符合規定
 				if (!CheckNewPassword(userDataDto.NewPassword, userDataDto.ConfirmPassword, out string newPasswordResult))
 				{
-					return new UserDataResponseDto
+					return Result<UserDataResponseDto>.Failure(newPasswordResult, new UserDataResponseDto
 					{
-						IsSuccess = false,
-						Message = "更新資料失敗：" + newPasswordResult,
-						User = new UserDataVO
-						{
-							Username = user.Username,
-							Email = user.Email,
-							Student_id = user.Student_id,
-							PhoneNumber = user.TelePhone
-						}
-					};
+						Message = "更新資料失敗：" + ErrorMessages.GetMessage(newPasswordResult),
+						User = _mapper.Map<UserDataVO>(user)
+					});
 				}
 
 				//寄信二次確認
 				//這裡可以加入寄信二次確認的邏輯
 
 				//密碼加密處理
-				user.Password = BCrypt.Net.BCrypt.HashPassword(userDataDto.NewPassword);
+				changeuser.Password = BCrypt.Net.BCrypt.HashPassword(userDataDto.NewPassword);
 			}
 
-			user.Modified_at = DateTime.UtcNow;
+			changeuser.Modified_at = DateTime.UtcNow;
 
-			_context.Users.Update(user);
+			_context.Users.Update(changeuser);
 			await _context.SaveChangesAsync();
 
-			return new UserDataResponseDto { 
-				IsSuccess = true, 
+			return Result<UserDataResponseDto>.Success(new UserDataResponseDto
+			{
 				Message = "更新資料成功",
-				User = new UserDataVO
-				{
-					Username = user.Username,
-					Email = user.Email,
-					Student_id = user.Student_id,
-					PhoneNumber = user.TelePhone
-				}
-			};
+				User = _mapper.Map<UserDataVO>(changeuser)
+			});
 		}
 	}
 }

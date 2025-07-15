@@ -5,13 +5,11 @@ using BookTradingPlatform.Services;
 [Route("api/[controller]")]
 public class ProductController : ControllerBase
 {
-	//private readonly WebDatabase _context;
     private readonly IProductService _productService;
-	private readonly AdminLogService _adminLogService;
+    private readonly IAdminLogService _adminLogService;
 
-    public ProductController(IProductService productService, AdminLogService adminLogService)
+    public ProductController(IProductService productService, IAdminLogService adminLogService)
     {
-		//_context = context;
         _productService = productService;
 		_adminLogService = adminLogService;
     }

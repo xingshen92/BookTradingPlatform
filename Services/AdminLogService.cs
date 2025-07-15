@@ -4,7 +4,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BookTradingPlatform.Services
 {
-	public class AdminLogService
+	public interface IAdminLogService
+	{
+		Task AddLogAdminAsync(int id, string workDescription);
+		Task<List<Adminlog>> GetAdminLogsAsync();
+	}
+
+	class AdminLogService: IAdminLogService
 	{
 		private readonly WebDatabase _context;
 		private readonly IHttpContextAccessor _httpContextAccessor;

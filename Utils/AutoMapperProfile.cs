@@ -2,6 +2,7 @@ using AutoMapper;
 using BookTradingPlatform.Controllers.Models;
 using BookTradingPlatform.Dtos;
 using BookTradingPlatform.Models;
+using BookTradingPlatform.Vos;
 
 namespace BookTradingPlatform.Utils
 {
@@ -18,6 +19,9 @@ namespace BookTradingPlatform.Utils
             CreateMap<Product, ProductVO>();
             // Entity ↔ BO (商業邏輯層)
             CreateMap<Product, ProductBO>().ReverseMap();
-        }
-    }
+            // User → UserDataVO
+            CreateMap<User, UserDataVO>()
+                .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.TelePhone));
+		}
+	}
 }

@@ -1,4 +1,5 @@
-﻿using BookTradingPlatform.Dtos;
+﻿using BookTradingPlatform.Common;
+using BookTradingPlatform.Dtos;
 using BookTradingPlatform.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -6,10 +7,10 @@ using Microsoft.AspNetCore.Mvc;
 [Route("api/[controller]")]
 public class UserDataController : ControllerBase
 {
-	private readonly UserDataService _userdataService;
-	private readonly AdminLogService _adminLogService;
+	private readonly IUserDataService _userdataService;
+	private readonly IAdminLogService _adminLogService;
 
-	public UserDataController(UserDataService userdataService, AdminLogService adminLogService)
+	public UserDataController(IUserDataService userdataService, IAdminLogService adminLogService)
 	{
 		_userdataService = userdataService;
 		_adminLogService = adminLogService;
@@ -21,8 +22,8 @@ public class UserDataController : ControllerBase
 	{
 		var response = await _userdataService.GetUserDataAsync(id);
 
-		if (response == null)
-			return NotFound("使用者資料取得失敗");
+		if (!response.IsSuccess)
+			return NotFound(new {ErrorCode = response.ErrorCode, ErrorMessage = response.ErrorMessage});
 
 		return Ok(response);
 	}
@@ -33,11 +34,8 @@ public class UserDataController : ControllerBase
 	{
 		var response = await _userdataService.UpdateDataAsync(id, userdataDto);
 		
-		if (response == null)
-			return NotFound("更新資料失敗：未回傳資料");
-		
 		if (!response.IsSuccess)
-			return BadRequest(response);
+			return BadRequest(new {ErrorCode = response.ErrorCode, ErrorMessage = response.ErrorMessage });
 
 		await _adminLogService.AddLogAdminAsync(id, "修改個人資料");
 

@@ -21,7 +21,6 @@ public class ProductService : IProductService
     {
         _context = context;
         _mapper = mapper;
-        
     }
 
     public async Task<IEnumerable<ProductVO>> GetAllAsync() // 取得所有商品
