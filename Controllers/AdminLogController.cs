@@ -5,8 +5,8 @@ using BookTradingPlatform.Services;
 [Route("api/[controller]")]
 public class AdminLogController : ControllerBase
 {
-	private readonly AdminLogService _adminLogService;
-	public AdminLogController(AdminLogService adminLogService)
+	private readonly IAdminLogService _adminLogService;
+	public AdminLogController(IAdminLogService adminLogService)
 	{
 		_adminLogService = adminLogService;
 	}
