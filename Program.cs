@@ -14,8 +14,8 @@ builder.Services.AddScoped<RegisterService>(); //註冊
 builder.Services.AddScoped<LoginService>(); //登入
 builder.Services.AddScoped<JwtTokenServices>();
 builder.Services.AddScoped<IProductService, ProductService>();
-builder.Services.AddScoped<AdminLogService>(); // 管理員紀錄服務
-builder.Services.AddScoped<UserDataService>(); // 使用者資料服務
+builder.Services.AddScoped<IAdminLogService, AdminLogService>(); // 管理員紀錄服務
+builder.Services.AddScoped<IUserDataService, UserDataService>(); // 使用者資料服務
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
