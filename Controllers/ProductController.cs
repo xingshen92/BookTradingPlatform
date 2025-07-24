@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using BookTradingPlatform.Controllers.Models;
 using BookTradingPlatform.Services;
+using Microsoft.AspNetCore.Mvc;
+using Mysqlx;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -11,71 +13,67 @@ public class ProductController : ControllerBase
     public ProductController(IProductService productService, IAdminLogService adminLogService)
     {
         _productService = productService;
-		_adminLogService = adminLogService;
+        _adminLogService = adminLogService;
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<ProductVO>>> GetAll()
+    public async Task<IActionResult> GetAll()
     {
-        try
-        {
-            var products = await _productService.GetAllAsync();
-            return Ok(products);
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, $"發生錯誤: {ex.Message}");
-        }
+        var response = await _productService.GetAllAsync();
+
+        if (!response.IsSuccess)
+            return NotFound(new { IsSuccess = response.IsSuccess, ErrorCode = response.ErrorCode, ErrorMessage = response.ErrorMessage });
+
+        return Ok(new { IsSuccess = response.IsSuccess, Data = response.Data });
     }
-    
+
     [HttpGet("{id}")]
-    public async Task<ActionResult<ProductVO>> GetById(int id)
+    public async Task<IActionResult> GetById(int id)
     {
-        var product = await _productService.GetByIdAsync(id);
-        if (product == null) return NotFound();
-        return Ok(product);
+        var response = await _productService.GetByIdAsync(id);
+
+        if (!response.IsSuccess)
+            return NotFound(new { IsSuccess = response.IsSuccess, ErrorCode = response.ErrorCode, ErrorMessage = response.ErrorMessage });
+
+        return Ok(new { IsSuccess = response.IsSuccess, Data = response.Data });
     }
 
     [HttpPost]
-    public async Task<ActionResult<ProductVO>> Create(ProductCreateDto dto)
+    [Consumes("multipart/form-data")]
+    public async Task<IActionResult> Create([FromForm] int id, ProductCreateDto dto)
     {
-        var product = await _productService.CreateAsync(dto);
-        return CreatedAtAction(nameof(GetById), new { id = product.Id }, product);
+        var response = await _productService.CreateAsync(dto);
+
+        if (!response.IsSuccess)
+            return NotFound(new { IsSuccess = response.IsSuccess, ErrorCode = response.ErrorCode, ErrorMessage = response.ErrorMessage });
+
+        await _adminLogService.AddLogAdminAsync(id, "新增商品資料");
+
+        return Ok(new { IsSuccess = response.IsSuccess, Data = response.Data });
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update(int id, ProductUpdateDto dto)
+    [Consumes("multipart/form-data")]
+    public async Task<IActionResult> Update([FromForm] int id, ProductUpdateDto dto)
     {
-        var success = await _productService.UpdateAsync(id, dto);
-        if (!success) return NotFound();
-        return NoContent();
-    }
+        var response = await _productService.UpdateAsync(id, dto);
 
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(int id)
-    {
-        var success = await _productService.DeleteAsync(id);
-        if (!success) return NotFound();
-        return NoContent();
-    }
+		if (!response.IsSuccess)
+			return NotFound(new { IsSuccess = response.IsSuccess, ErrorCode = response.ErrorCode, ErrorMessage = response.ErrorMessage });
+
+        await _adminLogService.AddLogAdminAsync(id, "修改商品資料");
+
+		return Ok(new { IsSuccess = response.IsSuccess, Data = response.Data });
+	}
+
+    //[HttpDelete("{id}")]
+    //public async Task<IActionResult> Delete(int id)
+    //{
+    //   var response = await _productService.DeleteAsync(id);
+
+	//	if (!response.IsSuccess)
+	//		return NotFound(new { IsSuccess = response.IsSuccess, ErrorCode = response.ErrorCode, ErrorMessage = response.ErrorMessage });
+
+	//	return Ok(new { IsSuccess = response.IsSuccess, Data = response.Data });
+	//}
 }
-
-//admin log
-//	[HttpPost("add")]
-//	public async Task<IActionResult> AddProduct([FromBody] Product product)
-//	{
-//		var username = User.Identity?.Name;
-//		var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
-//		var ip = HttpContext.Connection.RemoteIpAddress?.ToString();
-//
-//		if (user != null)
-//		{
-//			await _logService.LogAdminActionAsync(user, ip, $"新增商品：{product.Name}");
-//		}
-//
-//		_context.Products.Add(product);
-//		await _context.SaveChangesAsync();
-//
-//		return Ok(new { message = "Product added." });
-//	}
-//}

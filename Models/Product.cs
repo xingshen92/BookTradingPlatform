@@ -28,7 +28,7 @@ namespace BookTradingPlatform.Controllers.Models
 
 		// 外鍵與導覽屬性
 		[ForeignKey("User")]
-		public int Userid { get; set; }
+		public string Userid { get; set; }
 		public User User { get; set; } //擁有者
     }
 }

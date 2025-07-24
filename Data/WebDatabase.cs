@@ -1,8 +1,9 @@
 ﻿using BookTradingPlatform.Controllers.Models;
-using BookTradingPlatform.Models;
 using BookTradingPlatform.Data;
+using BookTradingPlatform.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection.Emit;
 
 namespace BookTradingPlatform.Data
 {
@@ -54,7 +55,7 @@ namespace BookTradingPlatform.Data
 				entity.Property(e => e.SKU).HasColumnName("SKU").HasMaxLength(50);
 				entity.Property(e => e.Name).HasColumnName("name").HasMaxLength(200);
 				entity.Property(e => e.PublishingHouse).HasColumnName("publishing_house");
-				entity.Property(e => e.PublishingAt).HasColumnName("publishing_at").HasMaxLength(50);;
+				entity.Property(e => e.PublishingAt).HasColumnName("publishing_at").HasMaxLength(20);;
 				entity.Property(e => e.Price).HasColumnName("price");
 				entity.Property(e => e.Desc).HasColumnName("desc").HasMaxLength(1000);
 				entity.Property(e => e.Image).HasColumnType("image").HasMaxLength(20);
@@ -62,6 +63,16 @@ namespace BookTradingPlatform.Data
 				entity.Property(e => e.Transaction).HasColumnName("transaction").HasMaxLength(20);
 			}
 			);
+			// 使用者MemberNumber唯一性索引
+			ModelBuilder.Entity<User>()
+				.HasIndex(u => u.MemberNumber)
+				.IsUnique();
+			// 外鍵關聯
+			ModelBuilder.Entity<Product>()
+				.HasOne(p => p.User)
+				.WithMany(u => u.Products)
+				.HasForeignKey(p => p.Userid)
+				.HasPrincipalKey(u => u.MemberNumber);
 			//ModelBuilder.Entity<Favorite>(entity =>
 			//{
 			//	entity.ToTable("Favorites");

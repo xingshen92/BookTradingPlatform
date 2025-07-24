@@ -2,10 +2,8 @@
 using BookTradingPlatform.Common;
 using BookTradingPlatform.Data;
 using BookTradingPlatform.Dtos;
-using BookTradingPlatform.Models;
 using BookTradingPlatform.Vos;
 using Microsoft.EntityFrameworkCore;
-using MySqlX.XDevAPI.Common;
 using System.Text.RegularExpressions;
 
 namespace BookTradingPlatform.Services
@@ -61,11 +59,12 @@ namespace BookTradingPlatform.Services
 				return false;
 			}
 
-			if (" ".Contains(Username)) //檢查帳號名稱是否包含空格
+			if(Username.Any(char.IsWhiteSpace)) //檢查帳號名稱是否包含空格
 			{
 				result = ErrorCodes.UserNameSpace;
 				return false;
 			}
+
 
 			if (!Regex.IsMatch(Username, "[a-zA-Z]")) //檢查帳號名稱是否包含至少一個英文字母
 			{
@@ -79,12 +78,23 @@ namespace BookTradingPlatform.Services
 
 		private bool CheckEmail(string Email, out string result) //信箱格式限制
 		{
-			var parts = Email.Split('@');
-			var domain = parts[1];
+			string[] parts = null!;
+			string domain = string.Empty;
 
 			if (string.IsNullOrEmpty(Email)) //檢查信箱是否為空
 			{
 				result = ErrorCodes.EmailIsNull;
+				return false;
+			}
+
+			try //檢查信箱格式是否至少有一個 '@' 符號
+			{
+				parts = Email.Split('@');
+				domain = parts[1];
+			}
+			catch
+			{
+				result = ErrorCodes.EmailFormatError;
 				return false;
 			}
 
@@ -94,7 +104,7 @@ namespace BookTradingPlatform.Services
 				return false;
 			}
 
-			if (" ".Contains(Email)) //檢查信箱是否包含空格
+			if (Email.Any(char.IsWhiteSpace)) //檢查信箱是否包含空格
 			{
 				result = ErrorCodes.EmailSpace;
 				return false;
@@ -130,7 +140,7 @@ namespace BookTradingPlatform.Services
 				return false;
 			}
 
-			if (" ".Contains(Student_id)) //檢查學號是否包含空格
+			if (Student_id.Any(char.IsWhiteSpace)) //檢查學號是否包含空格
 			{
 				result = ErrorCodes.StudentSpace;
 				return false;
@@ -191,7 +201,7 @@ namespace BookTradingPlatform.Services
 				return false;
 			}
 
-			if (" ".Contains(Newpassword)) //檢查新密碼是否包含空格
+			if (Newpassword.Any(char.IsWhiteSpace)) //檢查新密碼是否包含空格
 			{
 				result = ErrorCodes.PasswordsSpace;
 				return false;

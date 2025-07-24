@@ -1,5 +1,4 @@
-﻿using BookTradingPlatform.Common;
-using BookTradingPlatform.Dtos;
+﻿using BookTradingPlatform.Dtos;
 using BookTradingPlatform.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -23,9 +22,9 @@ public class UserDataController : ControllerBase
 		var response = await _userdataService.GetUserDataAsync(id);
 
 		if (!response.IsSuccess)
-			return NotFound(new {ErrorCode = response.ErrorCode, ErrorMessage = response.ErrorMessage});
+			return NotFound(new {IsSuccess = response.IsSuccess, ErrorCode = response.ErrorCode, ErrorMessage = response.ErrorMessage});
 
-		return Ok(response);
+		return Ok(new {IsSuccess = response.IsSuccess, Data = response.Data});
 	}
 
 	//更新使用者資料
@@ -35,10 +34,10 @@ public class UserDataController : ControllerBase
 		var response = await _userdataService.UpdateDataAsync(id, userdataDto);
 		
 		if (!response.IsSuccess)
-			return BadRequest(new {ErrorCode = response.ErrorCode, ErrorMessage = response.ErrorMessage });
+			return BadRequest(new {IsSuccess = response.IsSuccess, ErrorCode = response.ErrorCode, ErrorMessage = response.ErrorMessage, Data = response.Data });
 
 		await _adminLogService.AddLogAdminAsync(id, "修改個人資料");
 
-		return Ok(response);
+		return Ok(new {IsSuccess = response.IsSuccess, Data = response.Data});
 	}
 }
