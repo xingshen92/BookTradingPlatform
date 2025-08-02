@@ -2,6 +2,7 @@
 using BookTradingPlatform.Common;
 using BookTradingPlatform.Data;
 using BookTradingPlatform.Dtos;
+using BookTradingPlatform.Models;
 using BookTradingPlatform.Vos;
 using Microsoft.EntityFrameworkCore;
 using System.Text.RegularExpressions;
@@ -240,11 +241,13 @@ namespace BookTradingPlatform.Services
 		public async Task<Result<UserDataResponseDto>> UpdateDataAsync(int id, UserDataRequestDto userDataDto)
 		{
 			var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
-			var changeuser = user;
+			User changeuser; //用來儲存需要更新的用戶資料
 			var passwordfilled = 0; //用來計算密碼欄位是否有填寫
 
 			if (user == null)
 				return Result<UserDataResponseDto>.Failure(ErrorCodes.UserNotFound);
+
+			changeuser = user;
 
 			if (user.Username == userDataDto.Username && //如果沒有任何資料需要更新，直接返回成功訊息
 				user.Email == userDataDto.Email &&

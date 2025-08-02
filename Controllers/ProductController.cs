@@ -1,7 +1,6 @@
-﻿using BookTradingPlatform.Controllers.Models;
+﻿using BookTradingPlatform.Dtos;
 using BookTradingPlatform.Services;
 using Microsoft.AspNetCore.Mvc;
-using Mysqlx;
 
 [ApiController]
 [Route("api/[controller]")]

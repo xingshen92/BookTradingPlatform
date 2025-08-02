@@ -1,4 +1,5 @@
 using AutoMapper;
+using BookTradingPlatform.Bos;
 using BookTradingPlatform.Controllers.Models;
 using BookTradingPlatform.Dtos;
 using BookTradingPlatform.Models;

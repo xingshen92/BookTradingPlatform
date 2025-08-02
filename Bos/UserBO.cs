@@ -2,14 +2,14 @@
 {
 	public class UserBO
 	{
-		public string MemberNumber { get; set; } 
-		public string Username { get; set; }
-		public string Email { get; set; }
-		public string PasswordHash { get; set; }
-		public string StudentId { get; set; }
-		public string Department { get; set; }
-		public string Telephone { get; set; }
-		public string Role { get; set; }
+		public string MemberNumber { get; set; } = string.Empty;
+		public string Username { get; set; } = string.Empty;
+		public string Email { get; set; } = string.Empty;
+		public string PasswordHash { get; set; } = string.Empty;
+		public string StudentId { get; set; } = string.Empty;
+		public string Department { get; set; } = string.Empty;
+		public string Telephone { get; set; } = string.Empty;
+		public string Role { get; set; } = string.Empty;
 		public DateTime ModifiedAt { get; set; }
 
 		// 轉換成PO
@@ -28,5 +28,7 @@
 				Modified_at = this.ModifiedAt
 			};
 		}
+
+		public UserBO() { }
 	}
 }

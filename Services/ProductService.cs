@@ -1,10 +1,9 @@
 using AutoMapper;
 using BookTradingPlatform.Common;
 using BookTradingPlatform.Controllers.Models;
+using BookTradingPlatform.Dtos;
 using BookTradingPlatform.Data;
-using Microsoft.AspNetCore.Mvc.TagHelpers;
 using Microsoft.EntityFrameworkCore;
-using static System.Net.Mime.MediaTypeNames;
 
 public interface IProductService
 {
@@ -42,12 +41,6 @@ public class ProductService : IProductService
 
 	private bool CheckName(string name, out string result) //檢查商品名稱是否符合規範
     {
-        if (string.IsNullOrEmpty(name)) //檢查商品名稱是否為空
-		{
-            result = ErrorCodes.ProductNameIsNull;
-			return false;
-        }
-
         if (name.Length < 3) //檢查商品名稱長度是否小於3
 		{
             result = ErrorCodes.ProductNameTooShort;
@@ -65,12 +58,6 @@ public class ProductService : IProductService
 
     private bool CheckPublishingHouse(string publishingHouse, out string result) //檢查出版社是否符合規範
     {
-        if (string.IsNullOrEmpty(publishingHouse)) //檢查出版社是否為空
-        {
-            result = ErrorCodes.ProductPublishingHouseIsNull;
-            return false;
-		}
-
         if (publishingHouse.Any(char.IsWhiteSpace)) //檢查出版社是否包含空格
         {
             result = ErrorCodes.ProductPublishingHouseSpace;
@@ -125,12 +112,6 @@ public class ProductService : IProductService
 
     private bool CheckPrice(decimal? price, out string result) //檢查價格是否符合規範
     {
-        if (string.IsNullOrEmpty(price.ToString())) //檢查價格是否為空
-        {
-            result = ErrorCodes.ProductPriceIsNull;
-            return false;
-        }
-
 		if (decimal.IsNegative((decimal)price!)) //檢查價格是否為負數
         {
             result = ErrorCodes.ProductPriceIsNegative;
@@ -149,12 +130,6 @@ public class ProductService : IProductService
 
     private bool CheckDesc(string desc, out string result) //檢查描述是否符合規範
     {
-        if (string.IsNullOrEmpty(desc)) //檢查描述是否為空
-        {
-            result = ErrorCodes.ProductDescIsNull;
-            return false;
-        }
-
         if (desc.Length > 1000) //檢查描述長度是否大於1000
         {
             result = ErrorCodes.ProductDescTooLong;
@@ -263,11 +238,13 @@ public class ProductService : IProductService
     public async Task<Result<ProductVO>> UpdateAsync(int id, ProductUpdateDto dto)
     {
         var product = await _context.Products.FindAsync(id);
-        var changeproduct = product!;
+        Product changeproduct;
 		byte[] imageBytes;
 
 		if (product == null) 
             return Result<ProductVO>.Failure(ErrorCodes.ProductNotFound);
+
+		changeproduct = product;
 
 		if (dto.Image != null && dto.Image.Length > 0) //先檢查是否有上傳圖片
 		{
@@ -288,57 +265,86 @@ public class ProductService : IProductService
 
             changeproduct.Image = imageBytes;
         }
-
-
-        if(dto.Name != product.Name) //檢查商品名稱是否有變更
+        else
         {
-            if (!CheckName(dto.Name ?? string.Empty, out string nameresult)) //檢查商品名稱
-            {
-                return Result<ProductVO>.Failure(nameresult, _mapper.Map<ProductVO>(product));
-			}
-            
-            changeproduct.Name = dto.Name!; //更新商品名稱
-        }
-
-        if(dto.PublishingHouse != product.PublishingHouse) //檢查出版社是否有變更
-        {
-            if (!CheckPublishingHouse(dto.PublishingHouse ?? string.Empty, out string publishinghouseresult)) //檢查出版社
-            {
-                return Result<ProductVO>.Failure(publishinghouseresult, _mapper.Map<ProductVO>(product));
-			}
-
-            changeproduct.PublishingHouse = dto.PublishingHouse!; //更新出版社
+			return Result<ProductVO>.Failure(ErrorCodes.ProductImageIsNull, _mapper.Map<ProductVO>(product));
 		}
 
-        if(dto.PublishingAt != product.PublishingAt) //檢查出版時間是否有變更
+        if (!string.IsNullOrEmpty(dto.Name)) //檢查商品名稱是否有提供
         {
-            if (!CheckPublishingAt(dto.PublishingAt ?? string.Empty, out string publishingatresult)) //檢查出版時間
-            {
-                return Result<ProductVO>.Failure(publishingatresult, _mapper.Map<ProductVO>(product));
-			}
+            if (dto.Name != product.Name) //檢查商品名稱是否有變更
+			{
+                if (!CheckName(dto.Name, out string nameresult)) //檢查商品名稱
+                {
+                    return Result<ProductVO>.Failure(nameresult, _mapper.Map<ProductVO>(product));
+                }
 
-			changeproduct.PublishingAt = dto.PublishingAt!; //更新出版時間
-		}
-
-        if(dto.Price != product.Price) //檢查價格是否有變更
-        {
-            if (!CheckPrice(dto.Price, out string priceresult)) //檢查價格
-            {
-                return Result<ProductVO>.Failure(priceresult, _mapper.Map<ProductVO>(product));
+                changeproduct.Name = dto.Name; //更新商品名稱
             }
-
-            changeproduct.Price = (decimal)dto.Price!; //更新價格
         }
+        else
+            return Result<ProductVO>.Failure(ErrorCodes.ProductNameIsNull, _mapper.Map<ProductVO>(product));
 
-        if(dto.Desc != product.Desc) //檢查描述是否有變更
+        if (!string.IsNullOrEmpty(dto.PublishingHouse))
         {
-            if (!CheckDesc(dto.Desc ?? string.Empty, out string desresult)) //檢查描述
+		    if (dto.PublishingHouse != product.PublishingHouse) //檢查出版社是否有變更
             {
-                return Result<ProductVO>.Failure(desresult, _mapper.Map<ProductVO>(product));
-            }
+                if (!CheckPublishingHouse(dto.PublishingHouse, out string publishinghouseresult)) //檢查出版社
+                {
+                    return Result<ProductVO>.Failure(publishinghouseresult, _mapper.Map<ProductVO>(product));
+			    }
 
-            changeproduct.Desc = dto.Desc!; //更新描述
+                changeproduct.PublishingHouse = dto.PublishingHouse; //更新出版社
+		    }
         }
+        else
+            return Result<ProductVO>.Failure(ErrorCodes.ProductPublishingHouseIsNull, _mapper.Map<ProductVO>(product));
+
+        if (!string.IsNullOrEmpty(dto.PublishingAt)) //檢查出版時間是否有提供
+            {
+            if (dto.PublishingAt != product.PublishingAt) //檢查出版時間是否有變更
+            {
+                if (!CheckPublishingAt(dto.PublishingAt, out string publishingatresult)) //檢查出版時間
+                {
+                    return Result<ProductVO>.Failure(publishingatresult, _mapper.Map<ProductVO>(product));
+                }
+
+                changeproduct.PublishingAt = dto.PublishingAt; //更新出版時間
+            }
+        }
+        else
+            return Result<ProductVO>.Failure(ErrorCodes.ProductPublishingAtIsNull, _mapper.Map<ProductVO>(product));
+
+
+        if (dto.Price.HasValue) //檢查價格是否有提供
+        {
+            if (dto.Price != product.Price) //檢查價格是否有變更
+            {
+                if (!CheckPrice(dto.Price, out string priceresult)) //檢查價格
+                {
+                    return Result<ProductVO>.Failure(priceresult, _mapper.Map<ProductVO>(product));
+                }
+
+                changeproduct.Price = dto.Price.Value; //更新價格
+            }
+        }
+        else
+            return Result<ProductVO>.Failure(ErrorCodes.ProductPriceIsNull, _mapper.Map<ProductVO>(product));
+
+        if (!string.IsNullOrEmpty(dto.Desc)) //檢查描述是否有提供
+            {
+            if (dto.Desc != product.Desc) //檢查描述是否有變更
+            {
+                if (!CheckDesc(dto.Desc, out string desresult)) //檢查描述
+                {
+                    return Result<ProductVO>.Failure(desresult, _mapper.Map<ProductVO>(product));
+                }
+
+                changeproduct.Desc = dto.Desc; //更新描述
+            }
+        }
+        else
+            return Result<ProductVO>.Failure(ErrorCodes.ProductDescIsNull, _mapper.Map<ProductVO>(product));
 
 		changeproduct.SKU = dto.SKU!;
         changeproduct.Transaction = dto.Transaction!;
